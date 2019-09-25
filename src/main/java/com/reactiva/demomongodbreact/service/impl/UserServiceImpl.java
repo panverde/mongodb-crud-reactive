@@ -31,7 +31,10 @@ public class UserServiceImpl implements IUserService {
     @Override
     public Mono<User> updateUser(User user, String id) {
         return findOne(id).doOnSuccess(findUser ->{
-
+            findUser.setName(user.getName());
+            findUser.setCreationDate(user.getCreationDate());
+            findUser.setUserSettings(user.getUserSettings());
+            userRepository.save(findUser).subscribe();
         });
     }
     @Override
@@ -42,7 +45,8 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public Mono<Boolean> delete(String id) {
-        return null;
+        return userRepository.deleteById(id)
+                .flatMap(user->Mono.just(Boolean.TRUE));
     }
 
 
